@@ -1,0 +1,5 @@
+scripts
+.babelrc
+.gitignore
+.idea
+webpack.config.js

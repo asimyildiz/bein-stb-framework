@@ -1,11 +1,13 @@
 {
-  "name": "fw",
-  "version": "1.0.0",
+  "name": "beINFW",
+  "version": "1.0.5",
   "description": "beIN FW implementation using ES6",
   "main": "index.js",
   "scripts": {
     "aliases": "node scripts/aliases.js",
-    "build": "node scripts/aliases.js | webpack"
+    "build": "node scripts/aliases.js | webpack",
+    "prerelease": "npm run build",
+    "release": "npm publish"
   },
   "keywords": [
     "beIN",
@@ -15,6 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^8.5.0",
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
