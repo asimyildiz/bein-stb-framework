@@ -120,15 +120,15 @@ class AbstractChannelService extends AbstractFilterChannelService {
         }
         return this
             ._setCurrentChannelListId(listId)
-            .then((listId) => {
+            .then((currentListId) => {
                 const oldId = this._currentChannelListId;
                 const oldType = this._currentChannelListType;
-                this._currentChannelListId = listId;
+                this._currentChannelListId = currentListId;
                 this._currentChannelListType = type;
 
                 if (options.skipNotify !== true) {
                     this._onChannelListChange({
-                        id: listId,
+                        id: currentListId,
                         type
                     }, {
                         id: oldId,
@@ -137,7 +137,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
                 }
 
                 return {
-                    listId,
+                    currentListId,
                     type
                 };
             });
@@ -210,8 +210,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
                 }
                 return Promise.resolve(list);
             })
-            .then(list =>
-                list.filter(AbstractChannelService.byTypeFilter(type)));
+            .then(list => list.filter(AbstractChannelService.byTypeFilter(type)));
     }
 
     /**
@@ -238,7 +237,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
      * @returns {*}
      */
     orderChannelListByNumber() {
-        if (!this._currentOrderKey || this._currentOrderKey == 'CHANNELS_ORDERLIST_BREADCRUMB_NAME') {
+        if (!this._currentOrderKey || this._currentOrderKey === 'CHANNELS_ORDERLIST_BREADCRUMB_NAME') {
             this._currentOrderKey = 'CHANNELS_ORDERLIST_BREADCRUMB_NUMBER';
             return this.getOrderedChannelList();
         }
@@ -251,7 +250,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
      * @returns {*}
      */
     orderChannelListByName() {
-        if (!this._currentOrderKey || this._currentOrderKey == 'CHANNELS_ORDERLIST_BREADCRUMB_NUMBER') {
+        if (!this._currentOrderKey || this._currentOrderKey === 'CHANNELS_ORDERLIST_BREADCRUMB_NUMBER') {
             this._currentOrderKey = 'CHANNELS_ORDERLIST_BREADCRUMB_NAME';
             return this.getOrderedChannelList();
         }
@@ -330,9 +329,9 @@ class AbstractChannelService extends AbstractFilterChannelService {
                 // We want to return the channels object and not the list of ids
                 for (let i = 0; i < blocked.length; i++) {
                     const channel = blocked[i];
-                    listPromises.push(wtv.channelService.getChannelById(channel.id)
-                        .then((channel) => {
-                            newItems.push(channel);
+                    listPromises.push(this.getChannelById(channel.id)
+                        .then((currentChannel) => {
+                            newItems.push(currentChannel);
                         }));
                 }
                 return Promise.all(listPromises)
@@ -466,7 +465,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
      * @returns {*|Promise<AbstractChannel>}
      */
     getChannelBySId(id, options) {
-        // Check input args
+    // Check input args
         if (id == null) {
             return ServiceErrors.throwErrorAsPromise('getChannel: id is null !');
         }
@@ -498,7 +497,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
      * @returns {Promise<AbstractChannel|Error>} A promise resolved with the channel data (or undefined if not found).
      */
     getChannel(id, options, key) {
-        // Check input args
+    // Check input args
         if (id == null) {
             return ServiceErrors.throwErrorAsPromise('getChannel: id is null !');
         }
@@ -523,7 +522,9 @@ class AbstractChannelService extends AbstractFilterChannelService {
             .then((channelList) => {
                 for (let i = 0; i < numberList.length; i++) {
                     const index = Arrays.search(channelList, numberList[i], 'number');
-                    index > 0 && list.push(channelList[index]);
+                    if (index > 0) {
+                        list.push(channelList[index]);
+                    }
                 }
                 return list;
             });
@@ -542,7 +543,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
      * @returns {Promise<AbstractChannel|Error>} a promise (next channel object, error).
      */
     getNextChannel(channel, options) {
-        // Check input args
+    // Check input args
         if (channel == null) {
             return ServiceErrors.throwErrorAsPromise('getNextChannel: channel is null !');
         }
@@ -589,7 +590,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
      * @returns {Promise<AbstractChannel|Error>} a promise (next channel object, error).
      */
     getPreviousChannel(channel, options) {
-        // Check input args
+    // Check input args
         if (channel == null) {
             return ServiceErrors.throwErrorAsPromise('getPreviousChannel: channel is null !');
         }
@@ -634,7 +635,7 @@ class AbstractChannelService extends AbstractFilterChannelService {
      * @returns {Promise<AbstractChannel|Error>} channel, or undefined if the channel list was empty.
      */
     getNearestChannel(channel, options) {
-        // Check input args
+    // Check input args
         if (channel == null) {
             return ServiceErrors.throwErrorAsPromise('getPreviousChannel: channel is null !');
         }

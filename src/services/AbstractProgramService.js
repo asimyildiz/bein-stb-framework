@@ -66,7 +66,8 @@ class AbstractProgramService {
                     const channelId = channelIds[i];
                     let programs;
                     if (epg[channelId] == null) {
-                        programs = epg[channelId] = [];
+                        programs = [];
+                        epg[channelId] = [];
                     } else {
                         programs = epg[channelId];
                     }

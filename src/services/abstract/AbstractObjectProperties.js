@@ -7,9 +7,9 @@ class AbstractObjectProperties {
      * @constructor
      */
     constructor() {
-        // Check that PROPERTIES is defined
+    // Check that PROPERTIES is defined
         if (this.getPropertiesNames() == null) {
-            console.error('You must define a static variable named PROPERTIES in your class');
+            // console.error('You must define a static variable named PROPERTIES in your class');
         }
     }
 

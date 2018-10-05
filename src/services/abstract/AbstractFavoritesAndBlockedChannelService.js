@@ -35,7 +35,6 @@ class AbstractFavoritesAndBlockedChannelService extends AbstractFavoritesAndBloc
     checkFavorites(list) {
         const favoritesConfigList = AbstractFavoritesAndBlockedList.favoriteList || [];
         if (list.length < favoritesConfigList.length) {
-            console.debug('Need to create favorite list !');
             return this._initFavorites(list, favoritesConfigList)
                 .then(this.getAvailableFavoriteLists.bind(this));
         }
@@ -67,16 +66,15 @@ class AbstractFavoritesAndBlockedChannelService extends AbstractFavoritesAndBloc
      * @private
      */
     __deleteAllFavoritesList(currentList) {
-        // does not work with Promise.all !
-        // do not delete accidentally the blocked channel list
-        if (currentList.length > 0 && currentList[0].id != AbstractFavoritesAndBlockedList.BLOCKED_CHANNEL_LIST_ID) {
+    // does not work with Promise.all !
+    // do not delete accidentally the blocked channel list
+        if (currentList.length > 0 && currentList[0].id !== AbstractFavoritesAndBlockedList.BLOCKED_CHANNEL_LIST_ID) {
             return this.deleteFavoriteList(currentList[0].id)
                 .then(() => {
                     currentList.shift();
                     return this.__deleteAllFavoritesList(currentList);
                 });
         }
-        console.debug('All favorites lists have been deleted');
         return Promise.resolve();
     }
 
@@ -87,7 +85,7 @@ class AbstractFavoritesAndBlockedChannelService extends AbstractFavoritesAndBloc
      * @private
      */
     __createAllFavoritesList(configList) {
-        // does not work with Promise.all !
+    // does not work with Promise.all !
         if (configList.length > 0) {
             return this.createFavoriteList(configList[0])
                 .then(() => {
@@ -95,7 +93,6 @@ class AbstractFavoritesAndBlockedChannelService extends AbstractFavoritesAndBloc
                     return this.__createAllFavoritesList(configList);
                 });
         }
-        console.debug('All favorites lists have been created');
         return Promise.resolve();
     }
 
@@ -136,10 +133,11 @@ class AbstractFavoritesAndBlockedChannelService extends AbstractFavoritesAndBloc
         return this.getAvailableFavoriteLists()
             .then((list) => {
                 for (let i = 0; i < list.length; i++) {
-                    if (list[i].name == name) {
+                    if (list[i].name === name) {
                         return list[i];
                     }
                 }
+                return null;
             });
     }
 
@@ -183,7 +181,12 @@ class AbstractFavoritesAndBlockedChannelService extends AbstractFavoritesAndBloc
         return list.sort((a, b) => {
             const nameA = translator(a.name.toUpperCase());
             const nameB = translator(b.name.toUpperCase());
-            return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
+            if (nameA < nameB) {
+                return -1;
+            } if (nameA > nameB) {
+                return 1;
+            }
+            return 0;
         });
     }
 }

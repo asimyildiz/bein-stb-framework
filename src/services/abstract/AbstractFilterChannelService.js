@@ -129,8 +129,10 @@ class AbstractFilterChannelService extends AbstractFavoritesAndBlockedChannelSer
      * @returns {Promise|Error}
      */
     initFilters() {
-        let filter,
-            filterName;
+        let filter;
+
+
+        let filterName;
         const filters = [];
         const configFilters = AbstractFilterChannelService.filterList || [];
         for (let i = 0; i < configFilters.length; i++) {
@@ -186,14 +188,14 @@ class AbstractFilterChannelService extends AbstractFavoritesAndBlockedChannelSer
             promise = channelFilterPromise
                 .then(this._cacheFilteredList.bind(this, id));
         }
-        return promise.then((channelList) => {
+        return promise.then((channels) => {
             if (this._currentOrderKey) {
                 const sort = this.getCurrentOrderMethod();
                 if (isFunction(sort)) {
-                    channelList = channelList.sort(sort);
+                    channels = channels.sort(sort);
                 }
             }
-            return Promise.resolve(channelList);
+            return Promise.resolve(channels);
         });
     }
 

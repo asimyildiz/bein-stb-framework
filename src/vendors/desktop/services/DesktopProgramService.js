@@ -46,7 +46,8 @@ class DesktopProgramService extends AbstractProgramService {
             let scheduleChannel = schedule[channelId];
             if (!scheduleChannel) {
                 channelIds.push(channelId);
-                scheduleChannel = schedule[channelId] = [];
+                scheduleChannel = [];
+                schedule[channelId] = scheduleChannel;
             }
             program.start_date += delta / 1000;
             program.end_date += delta / 1000;

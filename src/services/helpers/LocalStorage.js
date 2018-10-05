@@ -15,6 +15,7 @@ class LocalStorage {
      * @param {Object} value
      * @returns {Object}
      */
+    /* eslint no-undef: 0 */
     static storeSync(key, value) {
         window.localStorage.setItem(key, JSON.stringify(value));
         return value;
@@ -38,6 +39,7 @@ class LocalStorage {
      * @param {Object} defaultValue
      * @returns {Object}
      */
+    /* eslint no-undef: 0 */
     static retrieveSync(key, defaultValue) {
         const value = JSON.parse(window.localStorage.getItem(key));
         if (value == null && defaultValue != null) {
@@ -62,6 +64,7 @@ class LocalStorage {
      * @param {String} key
      * @returns {String}
      */
+    /* eslint no-undef: 0 */
     static removeSync(key) {
         window.localStorage.removeItem(key);
         return key;

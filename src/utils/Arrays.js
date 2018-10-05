@@ -17,9 +17,9 @@ class Arrays {
      */
     static search(arr, value, propertyName) {
         for (let i = 0; i < arr.length; i++) {
-            const val = propertyName ?
-                arr[i][propertyName] :
-                arr[i];
+            const val = propertyName
+                ? arr[i][propertyName]
+                : arr[i];
             if (val === value) {
                 return i;
             }
@@ -72,7 +72,7 @@ class Arrays {
      * @returns {Number} - An index (positive or negative). See options for more details.
      */
     static binarySearch(arr, value, propertyName, options) {
-        /* jshint bitwise: false */
+    /* jshint bitwise: false */
         let imin = 0;
         let imax = arr.length - 1;
 
@@ -85,13 +85,13 @@ class Arrays {
         while (imin <= imax) {
             // calculate the midpoint for roughly equal partition
             const imid = (imin + imax) >>> 1;
-            const val = propertyName ?
-                arr[imid][propertyName] :
-                arr[imid];
+            const val = propertyName
+                ? arr[imid][propertyName]
+                : arr[imid];
             if (val === value) {
                 // key found at index imid
                 return imid;
-            } else if (val < value) {
+            } if (val < value) {
                 // determine which subarray to search
                 // change min index to search upper subarray
                 imin = imid + 1;
@@ -151,9 +151,9 @@ class Arrays {
             if (i > high) {
                 i = high;
             }
-            const val = propertyName ?
-                arr[i][propertyName] :
-                arr[i];
+            const val = propertyName
+                ? arr[i][propertyName]
+                : arr[i];
 
             if (val < value) {
                 low = i + 1;
@@ -190,13 +190,13 @@ class Arrays {
         // 'match' strategy
         if (options.strategy === 'match') {
             return -insertionIndex - 1;
-        } else if (options.strategy === 'floor') {
+        } if (options.strategy === 'floor') {
             // 'floor' strategy
             if (options.forceArrayRange && insertionIndex === 0) {
                 return 0;
             }
             return insertionIndex - 1;
-        } else if (options.strategy === 'round') {
+        } if (options.strategy === 'round') {
             // 'round' strategy
             // If the property is not a number, we can't use the round strategy
             if (typeof value !== 'number') {
@@ -205,7 +205,7 @@ class Arrays {
             // If insertion index is 0, the value is smaller than the first element so returns 0
             if (insertionIndex === 0) {
                 return 0;
-            } else if (insertionIndex === arr.length) {
+            } if (insertionIndex === arr.length) {
                 // Else if insertion index is arr.length, the value is greater than the first element so returns arr.length - 1
                 return arr.length - 1;
             }
@@ -215,7 +215,7 @@ class Arrays {
             const topVal = propertyName ? arr[insertionIndex][propertyName] : arr[insertionIndex];
 
             return value - lowVal < topVal - value ? insertionIndex - 1 : insertionIndex;
-        } else if (options.strategy === 'ceil') {
+        } if (options.strategy === 'ceil') {
             // 'ceil' strategy
             if (options.forceArrayRange && insertionIndex === arr.length) {
                 return arr.length - 1;

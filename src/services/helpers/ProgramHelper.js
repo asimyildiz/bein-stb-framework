@@ -5,7 +5,7 @@ class ProgramHelper {
      * @constructor
      */
     constructor() {
-        /**
+    /**
          * EPG: minimum duration between 2 programs to add an empty program.
          */
         this.minEmptyBlockDuration = 10 * 1000;
@@ -40,7 +40,7 @@ class ProgramHelper {
      * @protected
      */
     _addEmptyPrograms(programs, channelId, startTime, endTime, lightweight) {
-        // TODO programs.splice.apply may not be the best way to insert empty programs.
+    // TODO programs.splice.apply may not be the best way to insert empty programs.
         const channelIndex = this.__getChannelIndex(channelId);
         let emptyPrograms;
         if (programs.length === 0) {
@@ -164,7 +164,7 @@ class ProgramHelper {
      * @protected
      */
     _emptyProgram(channelId, channelIndex, start, duration, lightweight) {
-        const id = channelIndex * 1e10 + Math.floor(start / 1000);
+        const id = (channelIndex * 1e10) + Math.floor(start / 1000);
         if (lightweight) {
             return {
                 id,
@@ -191,7 +191,8 @@ class ProgramHelper {
     __getChannelIndex(channelId) {
         let index = this.__channelIndex[channelId];
         if (index === undefined) {
-            index = this.__channelIndex[channelId] = this.__channelCount++;
+            index = this.__channelCount++;
+            this.__channelIndex[channelId] = index;
         }
         return index;
     }

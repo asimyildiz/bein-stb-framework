@@ -94,7 +94,7 @@ class AbstractChannel extends AbstractNativeObjectModel {
      * @ignore
      */
     _create(params) {
-        // Nothing by default
+    // Nothing by default
     }
 
     /**

@@ -125,7 +125,7 @@ class ServiceCache {
         } else {
             options.value = (options.value != null && !Array.isArray(options.value)) ? [options.value] : options.value;
             options.params = (options.params != null && !Array.isArray(options.params)) ? [options.params] : options.params;
-            returnPromise = (options.getter) ? this[options.getter].apply(this, options.params) : this[options.setter].apply(this, options.value);
+            returnPromise = (options.getter) ? this[options.getter](...options.params) : this[options.setter](...options.value);
             returnPromise.then((value) => {
                 this.addToCacheSync(options.key, value);
                 // if event option declare, trigger it

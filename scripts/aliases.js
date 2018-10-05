@@ -64,7 +64,7 @@ const createAlias = (profile, alias, name, file, _imports, _exports, _aliases, l
         _imports.push(`import ${name} from '${filePathWithoutJs}';${os.EOL}`);
 
         let currentExport = `const ${alias} = new ${name}()`;
-        currentExport = length > 0 ? currentExport + ';' : currentExport;
+        currentExport = length > 0 ? `${currentExport};` : currentExport;
         _exports.push(currentExport + os.EOL);
 
         _aliases.push(alias);
@@ -73,28 +73,43 @@ const createAlias = (profile, alias, name, file, _imports, _exports, _aliases, l
 };
 
 /**
+ * create an alias for a vendor specific implementation using it's jsdoc
+ * @param {String} profile
+ * @param {String} file
+ * @param {Array<String>} _imports
+ * @param {Array<String>} _exports
+ * @param {Array<String>} _aliases
+ * @param {Number} filesLength
+ * @param {Object} error
+ * @param {Object} ast
+ */
+const createVendorAlias = (profile, file, _imports, _exports, _aliases, filesLength, error, ast) => {
+    createAlias(profile, ast[0].alias, ast[0].name, file, _imports, _exports, _aliases, filesLength);
+    if (filesLength === aliasesCreated) {
+        writeAliases(_imports, _exports, _aliases);
+    }
+};
+
+/**
  * find vendor implementations for services
  * @param {String} profile - current profile to create aliases for
- * @param {String} alias - alias name for current service
  * @param {Array<String>} _imports - import statements
  * @param {Array<String>} _exports - export statements
  * @param {Array<String>} _aliases
  */
-const findVendorFilesFor = (profile, alias, _imports, _exports, _aliases) => {
-    if (alias) {
-        glob(`src/vendors/${profile}/services/**/*${alias}.js`, { nocase: true }, function (er, files) {
-            if (!er && files && files.length > 0) {
-                const filesLength = files.length;
-                for (let i = 0; i < filesLength; i++) {
-                    parser(files[i], ((profile, file, error, ast) => {
-                        createAlias(profile, alias, ast[0].name, file, _imports, _exports, _aliases, filesLength);
-                        if (filesLength + 2 === aliasesCreated) { // TODO CHECK HERE SOMETHING IS WRONG WITH filesLength + X
-                            writeAliases(_imports, _exports, _aliases);
-                        }
-                    }).bind(this, profile, files[i]));
-                }
-            }
-        });
+const findVendorFilesFor = (profile, _imports, _exports, _aliases) => {
+    const managers = glob.sync('src/managers/**/*.js');
+    let files = glob.sync(`src/vendors/${profile}/services/**/*.js`);
+    if (files && files.length > 0) {
+        if (managers && managers.length > 0) {
+            // add managers into aliases
+            files = files.concat(managers);
+        }
+        const filesLength = files.length;
+        for (let i = 0; i < filesLength; i++) {
+            const currentFile = files[i];
+            parser(currentFile, createVendorAlias.bind(null, profile, currentFile, _imports, _exports, _aliases, filesLength));
+        }
     }
 };
 
@@ -105,18 +120,10 @@ const findVendorFilesFor = (profile, alias, _imports, _exports, _aliases) => {
  */
 const runnable = (profile) => {
     clearAliases();
-    glob('src/services/**/*.js', {}, (er, files) => {
-        if (!er && files && files.length > 0) {
-            let _imports = [];
-            let _exports = [];
-            let _aliases = [];
-            files.forEach((file, index) => {
-                parser(file, (error, ast) => {
-                    findVendorFilesFor(profile, ast[0].alias, _imports, _exports, _aliases);
-                });
-            });
-        }
-    });
+    const _imports = [];
+    const _exports = [];
+    const _aliases = [];
+    findVendorFilesFor(profile, _imports, _exports, _aliases);
 };
 
 program
@@ -125,4 +132,3 @@ program
     .arguments('<profile>')
     .action(runnable)
     .parse(process.argv);
-

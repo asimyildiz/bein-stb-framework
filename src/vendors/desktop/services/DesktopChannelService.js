@@ -31,7 +31,7 @@ class DesktopChannelService extends AbstractChannelService {
      * create fake data for channelList
      */
     create() {
-        // Blocked channel
+    // Blocked channel
         const blockedChannelMap = this._getBlockedChannelMap(); // channel.id : true
 
         // Create channel list
@@ -170,7 +170,7 @@ class DesktopChannelService extends AbstractChannelService {
                 }
             }
         } catch (e) {
-            console.error('Can not get or initialize the blocked channel list', e);
+            // console.error('Can not get or initialize the blocked channel list', e);
         }
         return blockedChannelMap;
     }

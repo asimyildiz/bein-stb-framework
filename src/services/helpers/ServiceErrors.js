@@ -43,7 +43,6 @@ class ServiceErrors {
      */
     notImplementedPromise(className, methodName) {
         const e = new Error(`You must implement ${className}.${methodName}`);
-        console.error(e);
         this._onError(e);
         return Promise.reject(e);
     }
@@ -56,7 +55,6 @@ class ServiceErrors {
      */
     notImplementedSync(className, methodName) {
         const e = new Error(`You must implement ${className}.${methodName}`);
-        console.error(e);
         this._onError(e);
         throw e;
     }

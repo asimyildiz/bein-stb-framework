@@ -24,7 +24,7 @@ class AbstractFavoritesAndBlockedList {
      * @constructor
      */
     constructor() {
-        // For MFavoritesAndBlockedList
+    // For MFavoritesAndBlockedList
         this.BLOCKED_LIST_ID = AbstractFavoritesAndBlockedList.BLOCKED_CHANNEL_LIST_ID;
         this.ALL_LIST_ID = AbstractFavoritesAndBlockedList.ALL_CHANNEL_LIST_ID;
     }

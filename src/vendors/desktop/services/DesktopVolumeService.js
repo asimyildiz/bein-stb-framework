@@ -13,6 +13,7 @@ class DesktopVolumeService extends AbstractVolumeService {
      * @protected
      * @override
      */
+    /* eslint no-undef: 0 */
     _setVolume(volume) {
         localStorage.setItem('volume', volume);
         return Promise.resolve(volume);
@@ -24,6 +25,7 @@ class DesktopVolumeService extends AbstractVolumeService {
      * @protected
      * @override
      */
+    /* eslint no-undef: 0 */
     _getVolume() {
         return Promise.resolve(parseInt(localStorage.getItem('volume'), 10));
     }
