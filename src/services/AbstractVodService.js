@@ -1,7 +1,10 @@
 import AbstractXhrService from './AbstractXhrService';
 import VodAccessor from './models/vod/VodAccessor';
 import VodClassificationNode from './models/vod/VodClassificationNode';
+import VodContent from './models/vod/VodContent';
 import VodResult from './models/vod/VodResult';
+import VodPlayResult from './models/vod/VodPlayResult';
+import VodUserSpecificProductData from './models/vod/VodUserSpecificProductData';
 import VodClassificationTree from './models/vod/VodClassificationTree';
 import VodSerializableTupple from './models/vod/VodSerializableTupple';
 import VodErrorMessages from './models/vod/VodErrorMessages';
@@ -12,6 +15,28 @@ import ServiceErrors from './helpers/ServiceErrors';
  * @alias vodService
  */
 class AbstractVodService extends AbstractXhrService {
+    /**
+     * @type {Object}
+     * @returns {Object}
+     */
+    static get ORDER_MODE() {
+        return {
+            ASC: 'ASCENDING',
+            DESC: 'DESCENDING'
+        };
+    }
+
+    /**
+     * @type {Object}
+     * @returns {Object}
+     */
+    static get STREAM_TYPES() {
+        return {
+            DASH: 'DASH',
+            SMOOTHSTREAM: 'SS'
+        };
+    }
+
     /**
      * set properties to use vod service
      */
@@ -61,6 +86,87 @@ class AbstractVodService extends AbstractXhrService {
     }
 
     /**
+     * @param {String} categoryId
+     * @param {Number} index
+     * @param {Number} length
+     * @param {String} orderMode
+     */
+    getContentsInClassification(categoryId, index, length, orderMode) {
+        return this._getContentsInClassification(categoryId, index, length, orderMode);
+    }
+
+    /**
+     * @param {String} categoryId
+     * @param {Number} index
+     * @param {Number} length
+     * @param {String} orderMode
+     * @returns {Promise} result of HTTP POST request
+     */
+    _getContentsInClassification(categoryId, index, length, orderMode) {
+        const params = {
+            categoryId,
+            index,
+            length,
+            orderMode: orderMode || AbstractVodService.ORDER_MODE.ASC,
+            useContentV2: 'true',
+            accessKeys: this._accessKeys.parseForService()
+        };
+
+        return this.postWithPromise('getContentsInClassification', params)
+            .then(this.__handleSerializableTuppleResponse.bind(this));
+    }
+
+    /**
+     * @param {String} contentID
+     * @param {String} assetID
+     */
+    playPreview(contentID, assetID) {
+        return this._playPreview(contentID, assetID);
+    }
+
+    /**
+     * @param {String} contentID
+     * @param {String} assetID
+     * @returns {Promise} result of HTTP POST request
+     */
+    _playPreview(contentID, assetID) {
+        const params = {
+            contentID,
+            assetID,
+            accessKeys: this._accessKeys.parseForService()
+        };
+
+        return this.postWithPromise('playPreview', params)
+            .then(response => this.__handleSingleResponse(new VodPlayResult(response)));
+    }
+
+    /**
+     * @param {String} contentID
+     * @param {String} classificationTermName
+     */
+    getUserSpecificContentData(contentID, classificationTermName) {
+        return this._getUserSpecificContentData(contentID, classificationTermName);
+    }
+
+    /**
+     * @param {String} contentID
+     * @param {String} classificationTermName
+     * @returns {Promise} result of HTTP POST request
+     */
+    _getUserSpecificContentData(contentID, classificationTermName) {
+        const params = {
+            contentID,
+            classificationTermName: classificationTermName || '',
+            useVersionEntitlement: 'true',
+            accessKeys: this._accessKeys.parseForService(),
+            streamFormatType: AbstractVodService.STREAM_TYPES.DASH
+        };
+
+        return this.postWithPromise('getUserSpecificContentData', params)
+            .then(response => this.__handleSingleResponse(new VodUserSpecificProductData(response)));
+    }
+
+    /**
      * Send the request as HTTP POST.
      *
      * @param {String} method - Remote method name.
@@ -89,6 +195,7 @@ class AbstractVodService extends AbstractXhrService {
     /**
      * @param {Function} ClassInstance
      * @param {Object} data
+     * @returns {Promise<*>}
      * @private
      */
     __handleArrayResponse(ClassInstance, data) {
@@ -100,9 +207,43 @@ class AbstractVodService extends AbstractXhrService {
     }
 
     /**
+     * @param {Object} data
+     * @private
+     */
+    __handleSingleResponse(data) {
+        if (data instanceof VodResult && !data.result) {
+            return Promise.reject(VodErrorMessages.createFromVODResult(data));
+        } if (data.result instanceof VodResult && !data.result.result) {
+            return Promise.reject(VodErrorMessages.createFromVODResult(data.result));
+        }
+        return Promise.resolve(data);
+    }
+
+    /**
+     * @param {Object} data
+     * @returns {Promise<*>}
+     * @private
+     */
+    __handleSerializableTuppleResponse(data) {
+        const totalCount = data.Item1;
+
+        const contentList = [];
+        for (let i = 0; i < data.Item2.length; i++) {
+            contentList.push(new VodContent(data.Item2[i]));
+        }
+
+        return Promise.resolve(
+            new VodSerializableTupple({
+                Item1: totalCount,
+                Item2: contentList
+            })
+        );
+    }
+
+    /**
      * Parses ClassificationTree array
      * @param {Array} classificationTree
-     * @returns {Promise}
+     * @returns {Promise<*>}
      * @private
      */
     __parseClassificationTree(classificationTree) {
@@ -134,9 +275,7 @@ class AbstractVodService extends AbstractXhrService {
                 }
                 return Promise.reject(VodErrorMessages.createHttpError(error));
             })
-            .then((response) => {
-                return Promise.resolve(response.data);
-            });
+            .then(response => Promise.resolve(response.data));
     }
 }
 

@@ -217,7 +217,7 @@ class VodErrorMessages {
     /**
      * Creates VodError object from VODResult object
      *
-     * @param {VODResult} vodError
+     * @param {VodResult} vodError
      * @returns {VodError}
      */
     static createFromVODResult(vodError) {

@@ -1,6 +1,6 @@
 {
   "name": "beINFW",
-  "version": "1.2.11",
+  "version": "1.2.14",
   "description": "beIN FW implementation using ES6",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "build": "node scripts/aliases.js | webpack",
     "postbuild": "eslint ./src/index.js --fix",
     "prerelease": "npm run build",
-    "release": "npm publish"
+    "release": "npm publish --registry http://localhost:4873/"
   },
   "keywords": [
     "beIN",
