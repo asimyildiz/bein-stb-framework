@@ -41,7 +41,10 @@ class VodManager {
             clientId: params.clientId,
             applicationId: params.applicationId,
             dbsCode: params.dbsCode,
-            portalCode: params.portalCode
+            portalCode: params.portalCode,
+            partyRoleId: params.partyRoleId,
+            sessionKey: params.sessionKey,
+            serviceAccountId: params.serviceAccountId
         });
 
         this.context.vodService.setCurrentAccessKeys(accessKeys);

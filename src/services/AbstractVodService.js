@@ -167,6 +167,58 @@ class AbstractVodService extends AbstractXhrService {
     }
 
     /**
+     * @param {String} contentID
+     */
+    getContentDetail(contentID) {
+        return this._getContentDetail(contentID);
+    }
+
+    /**
+     * @param {String} contentID
+     * @returns {Promise} result of HTTP POST request
+     */
+    _getContentDetail(contentID) {
+        const params = {
+            contentID,
+            accessKeys: this._accessKeys.parseForService()
+        };
+
+        return this.postWithPromise('getContentDetail', params)
+            .then(response => this.__handleSingleResponse(new VodContent(response)));
+    }
+
+    /**
+     * @param {String} contentID
+     * @param {Number} usageSpecId
+     * @param {String} assetID
+     * @param {String} streamType
+     */
+    play(contentID, usageSpecId, assetID, streamType) {
+        return this._play(contentID, usageSpecId, assetID, streamType);
+    }
+
+    /**
+     * @param {String} contentID
+     * @param {Number} usageSpecId
+     * @param {String} assetID
+     * @param {String} streamFormatType
+     * @returns {Promise} result of HTTP POST request
+     */
+    _play(contentID, usageSpecId, assetID, streamFormatType) {
+        const params = {
+            contentID,
+            usageSpecId,
+            assetID,
+            streamFormatType,
+            useVersionEntitlement: 'true',
+            accessKeys: this._accessKeys.parseForService()
+        };
+
+        return this.postWithPromise('play', params)
+            .then(response => this.__handleSingleResponse(new VodPlayResult(response)));
+    }
+
+    /**
      * Send the request as HTTP POST.
      *
      * @param {String} method - Remote method name.
