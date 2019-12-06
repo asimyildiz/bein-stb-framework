@@ -1,4 +1,4 @@
-digiturk (beIN Media Group) POC for new STB framework implementation using pure Javascript ES6 only
+POC for new STB framework implementation using pure Javascript ES6 only
 
 use verdaccio as npm registry for development purposes on local computer
 - npm install -g verdaccio
